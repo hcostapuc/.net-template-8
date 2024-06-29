@@ -16,7 +16,7 @@ It features an event-driven pattern so that when an order is created, it can sen
 
 ## Stack Technical
 
-- [ASP.NET Core 7](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0)
+- [ASP.NET Core 8](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-8.0)
 - [Entity Framework Core 7](https://docs.microsoft.com/en-us/ef/core/)
 - [MediatR](https://github.com/jbogard/MediatR)
 - [Swagger](https://swagger.io/)
