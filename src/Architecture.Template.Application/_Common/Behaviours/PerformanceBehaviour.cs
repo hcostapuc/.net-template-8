@@ -3,18 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Application._Common.Behaviours;
 
-public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+public class PerformanceBehaviour<TRequest, TResponse>(ILogger<TRequest> logger) : 
+             IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly Stopwatch _timer;
-    private readonly ILogger<TRequest> _logger;
-
-    public PerformanceBehaviour(
-        ILogger<TRequest> logger
-        )
-    {
-        _timer = new Stopwatch();
-        _logger = logger;
-    }
+    private readonly Stopwatch _timer = new();
+    private readonly ILogger<TRequest> _logger = logger;
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {

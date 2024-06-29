@@ -5,15 +5,12 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Common;
-public partial class BaseRepository<T> : IBaseRepository<T> where T : BaseAuditableEntity
+public partial class BaseRepository<T>(ApplicationDbContext context) : IBaseRepository<T> where T : BaseAuditableEntity
 {
-    protected readonly ApplicationDbContext _context;
-    protected readonly DbSet<T> _dataset;
-    public BaseRepository(ApplicationDbContext context)
-    {
-        _context = context ?? Guard.Against.Null(context, nameof(context));
-        _dataset = context.Set<T>();
-    }
+    protected readonly ApplicationDbContext _context = context ?? 
+                                                       Guard.Against.Null(context, nameof(context));
+    protected readonly DbSet<T> _dataset = context.Set<T>();
+
     public async Task<T> SelectAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default) =>
         await _dataset.AsNoTracking()
                  .SingleOrDefaultAsync(expression, cancellationToken);

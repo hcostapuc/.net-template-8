@@ -7,14 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(IMediator mediator,
+                            DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    protected readonly IMediator _mediator;
-    public ApplicationDbContext(IMediator mediator,
-                                DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-        _mediator = mediator ?? Guard.Against.Null(mediator, nameof(mediator));
-    }
+    protected readonly IMediator _mediator = mediator ?? 
+                                             Guard.Against.Null(mediator, nameof(mediator));
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         foreach (var entry in ChangeTracker.Entries<BaseAuditableEntity>())

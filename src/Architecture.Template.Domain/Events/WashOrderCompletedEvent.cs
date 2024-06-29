@@ -1,9 +1,8 @@
 ﻿using Ardalis.GuardClauses;
 
 namespace Domain.Events;
-public sealed class WashOrderCompletedEvent : BaseEvent
+public sealed class WashOrderCompletedEvent(WashOrderEntity washOrderEntity) : BaseEvent
 {
-    public WashOrderEntity WashOrderEntity { get; }
-    public WashOrderCompletedEvent(WashOrderEntity washOrderEntity) =>
-        WashOrderEntity = washOrderEntity ?? Guard.Against.Null(washOrderEntity, nameof(washOrderEntity));
+    public WashOrderEntity WashOrderEntity { get; } = washOrderEntity ?? 
+                                                      Guard.Against.Null(washOrderEntity, nameof(washOrderEntity));
 }

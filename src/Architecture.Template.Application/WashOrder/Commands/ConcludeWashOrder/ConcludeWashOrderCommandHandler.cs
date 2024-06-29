@@ -5,11 +5,11 @@ using Domain.Interfaces.Repository;
 using FluentValidation.Results;
 
 namespace Application.WashOrder.Commands.ConcludeWashOrder;
-public sealed class ConcludeWashOrderCommandHandler : IRequestHandler<ConcludeWashOrderCommand>
+public sealed class ConcludeWashOrderCommandHandler(IWashOrderRepository washOrderRepository) : IRequestHandler<ConcludeWashOrderCommand>
 {
-    private readonly IWashOrderRepository _washOrderRepository;
-    public ConcludeWashOrderCommandHandler(IWashOrderRepository washOrderRepository) =>
-        _washOrderRepository = washOrderRepository ?? Guard.Against.Null(washOrderRepository, nameof(washOrderRepository));
+    private readonly IWashOrderRepository _washOrderRepository = washOrderRepository ?? 
+                                                                 Guard.Against.Null(washOrderRepository, nameof(washOrderRepository));
+
     public async Task Handle(ConcludeWashOrderCommand request, CancellationToken cancellationToken)
     {
         var washOrderEntity = await _washOrderRepository.SelectAsync(x => x.Id == request.Id, cancellationToken);

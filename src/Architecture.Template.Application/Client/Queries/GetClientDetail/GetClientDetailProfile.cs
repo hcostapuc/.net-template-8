@@ -5,6 +5,5 @@ public sealed class GetClientDetailProfile : Profile
     {
         CreateMap<ClientEntity, GetClientDetailRootDto>().ReverseMap();
         CreateMap<VehicleEntity, GetClientDetailVehicleDto>().ReverseMap();
-
     }
 }

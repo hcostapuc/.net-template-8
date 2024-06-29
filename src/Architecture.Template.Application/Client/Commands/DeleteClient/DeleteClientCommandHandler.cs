@@ -1,11 +1,11 @@
 ﻿using Domain.Interfaces.Repository;
 
 namespace Application.Client.Commands.DeleteClient;
-public sealed class DeleteClientCommandHandler : IRequestHandler<DeleteClientCommand>
+public sealed class DeleteClientCommandHandler(IClientRepository clientRepository) : IRequestHandler<DeleteClientCommand>
 {
-    private readonly IClientRepository _clientRepository;
-    public DeleteClientCommandHandler(IClientRepository clientRepository) =>
-        _clientRepository = clientRepository ?? Guard.Against.Null(clientRepository, nameof(clientRepository));
+    private readonly IClientRepository _clientRepository = clientRepository ?? 
+                                                           Guard.Against.Null(clientRepository, nameof(clientRepository));
+
     public async Task Handle(DeleteClientCommand request, CancellationToken cancellationToken)
     {
         var clientEntity = await _clientRepository.SelectAsync(x => x.Id == request.Id, cancellationToken);

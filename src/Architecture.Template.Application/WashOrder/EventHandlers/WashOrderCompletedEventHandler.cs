@@ -2,11 +2,10 @@
 using Microsoft.Extensions.Logging;
 
 namespace Application.WashOrder.EventHandlers;
-public sealed class WashOrderCompletedEventHandler : INotificationHandler<WashOrderCompletedEvent>
+public sealed class WashOrderCompletedEventHandler(ILogger<WashOrderCompletedEventHandler> logger) : INotificationHandler<WashOrderCompletedEvent>
 {
-    private readonly ILogger<WashOrderCompletedEventHandler> _logger;
-    public WashOrderCompletedEventHandler(ILogger<WashOrderCompletedEventHandler> logger) =>
-        _logger = logger ?? Guard.Against.Null(logger, nameof(logger));
+    private readonly ILogger<WashOrderCompletedEventHandler> _logger = logger ?? 
+                                                                       Guard.Against.Null(logger, nameof(logger));
 
     public Task Handle(WashOrderCompletedEvent notification, CancellationToken cancellationToken)
     {

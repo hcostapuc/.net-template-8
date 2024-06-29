@@ -1,14 +1,13 @@
 ﻿using Application;
+using Ardalis.GuardClauses;
 using Infrastructure;
 
 namespace WebApi;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    public IConfiguration Configuration { get; }
-    public Startup(IConfiguration configuration) =>
-        Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-
+    public IConfiguration Configuration { get; } = configuration ?? 
+                                                   Guard.Against.Null(configuration,nameof(configuration));
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddApplication();

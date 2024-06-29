@@ -15,7 +15,7 @@ public sealed class Colour : ValueObject
 
     //TODO add validation of supported colours
     public static Colour From(string code) =>
-         new Colour { Code = code };
+         new() { Code = code };
 
     public string Code { get; private set; } = "#000000";
 

@@ -2,13 +2,11 @@
 
 namespace Application._Common.Behaviours;
 
-public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-     where TRequest : notnull
+public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : 
+             IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators) =>
-        _validators = validators ?? Guard.Against.Null(validators, nameof(validators));
+    private readonly IEnumerable<IValidator<TRequest>> _validators = validators ?? 
+                                                                     Guard.Against.Null(validators, nameof(validators));
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {

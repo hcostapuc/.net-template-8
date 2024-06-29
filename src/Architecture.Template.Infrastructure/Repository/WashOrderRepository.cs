@@ -4,10 +4,7 @@ using Infrastructure.Common;
 using Infrastructure.Context;
 
 namespace Infrastructure.Repository;
-public sealed class WashOrderRepository : BaseRepository<WashOrderEntity>, IWashOrderRepository
+public sealed class WashOrderRepository(ApplicationDbContext context) : 
+                    BaseRepository<WashOrderEntity>(context), IWashOrderRepository
 {
-    public WashOrderRepository(ApplicationDbContext context) : base(context)
-    {
-
-    }
 }

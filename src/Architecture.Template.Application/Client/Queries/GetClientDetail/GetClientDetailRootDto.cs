@@ -4,6 +4,5 @@ public sealed record GetClientDetailRootDto(Guid Id,
                                             string Email,
                                             string Address)
 {
-    public IList<GetClientDetailVehicleDto> VehicleCollection { get; init; } = new List<GetClientDetailVehicleDto>();
-
+    public IList<GetClientDetailVehicleDto> VehicleCollection { get; init; } = [];
 }

@@ -4,10 +4,7 @@ using Infrastructure.Common;
 using Infrastructure.Context;
 
 namespace Infrastructure.Repository;
-public sealed class VehicleRepository : BaseRepository<VehicleEntity>, IVehicleRepository
+public sealed class VehicleRepository(ApplicationDbContext context) : 
+                    BaseRepository<VehicleEntity>(context), IVehicleRepository
 {
-    public VehicleRepository(ApplicationDbContext context) : base(context)
-    {
-
-    }
 }
