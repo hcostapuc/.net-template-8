@@ -1,13 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Client.Commands.CreateClient;
-using AutoFixture;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces.Repository;
-using FluentAssertions;
-using Moq;
-using Xunit;
 
 namespace Application.UnitTests.Client;
 
@@ -22,29 +19,34 @@ public class CreateClientCommandHandlerTest
     public async Task ShouldCreateSuccesfullyClient()
     {
         //Arrange
-        var fixture = new Fixture();
-        fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-        fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        fixture.Customize<CreateClientCommand>(x =>
-        x.With(p => p.Email, "valid@email.com")
-        .With(p => p.PhoneNumber, 123456789));
+        var command = new CreateClientCommand("NameTest", "test@test.com", 878773475, "Av test number 4");
+        var entity = new ClientEntity()
+        {
+            Name = "NameTest",
+            Email = "test@test.com",
+            PhoneNumber = 878773475,
+            Address = "Av test number 4"
+        };
 
-        var command = fixture.Create<CreateClientCommand>();
-
-        fixture.Customize<ClientEntity>(x =>
-        x.With(p => p.Email, "valid@email.com")
-        .With(p => p.PhoneNumber, 123456789));
-
-        var entityToCreate = fixture.Create<ClientEntity>();
         var clientRepository = new Mock<IClientRepository>(MockBehavior.Strict);
         var mapper = new Mock<IMapper>(MockBehavior.Strict);
         var cancellationToken = new CancellationToken();
 
-        clientRepository.Setup(x => x.InsertAsync(It.IsAny<ClientEntity>(), It.IsAny<CancellationToken>()))
-                        .ReturnsAsync(entityToCreate);
+        mapper.Setup(x => x.Map<CreateClientCommand, ClientEntity>(It.Is<CreateClientCommand>(c => c.Name == command.Name &&
+                                                                           c.Email == command.Email &&
+                                                                           c.PhoneNumber == command.PhoneNumber &&
+                                                                           c.Address == command.Address)))
+              .Returns(entity)
+              .Verifiable(Times.Once());
 
-        mapper.Setup(x => x.Map<CreateClientCommand, ClientEntity>(It.IsAny<CreateClientCommand>()))
-              .Returns(entityToCreate);
+        clientRepository.Setup(x => x.InsertAsync(It.Is<ClientEntity>(c => c.Name == command.Name &&
+                                                                           c.Id == Guid.Empty &&
+                                                                           c.Email == command.Email &&
+                                                                           c.PhoneNumber == command.PhoneNumber &&
+                                                                           c.Address == command.Address),
+                                                                           It.IsAny<CancellationToken>()))
+                        .ReturnsAsync(entity)
+                        .Verifiable(Times.Once());
 
         var commandHandler = new CreateClientCommandHandler(clientRepository.Object,
                                                             mapper.Object);
@@ -52,10 +54,7 @@ public class CreateClientCommandHandlerTest
         var entityResponse = await commandHandler.Handle(command, cancellationToken);
 
         //Assert
-        entityToCreate.Email.Should().Be(command.Email);
-        entityToCreate.PhoneNumber.Should().Be(command.PhoneNumber);
-        entityToCreate.Id.Should().Be(entityResponse);
-        clientRepository.Verify(x => x.InsertAsync(It.IsAny<ClientEntity>(), It.IsAny<CancellationToken>()), Times.Once());
-        mapper.Verify(x => x.Map<CreateClientCommand, ClientEntity>(It.IsAny<CreateClientCommand>()), Times.Once());
+        clientRepository.VerifyAll();
+        mapper.VerifyAll();
     }
 }
