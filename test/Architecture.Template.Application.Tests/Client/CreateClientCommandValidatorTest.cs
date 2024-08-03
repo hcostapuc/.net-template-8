@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,18 +34,45 @@ public class CreateClientCommandValidatorTest
         validationResult.Errors.Should().BeEmpty();
         clientRepository.VerifyAll();
     }
-    [Fact]
-    public async Task ShouldBeEmptyName()
+    public static IEnumerable<object[]> InvalidFieldsCommandCollection =>
+        [
+            [new CreateClientCommand(string.Empty, "test@test.com", 988887787, "Av test number 3") , "Name is required."],
+
+            [new CreateClientCommand("Name Test", string.Empty, 988887787, "Av test number 3") , "Email is required."],
+            [new CreateClientCommand("Name Test", "testinvalidemail", 988887787, "Av test number 3") , "'Email' is not a valid email address."],
+
+            [new CreateClientCommand("Name Test", "test@test.com", 0, "Av test number 3") , "PhoneNumber is required."],
+            [new CreateClientCommand("Name Test", "test@test.com", 9887784, "Av test number 3") , "PhoneNumber needs to be 9 numbers."],
+
+        ];
+    [Theory]
+    [MemberData(nameof(InvalidFieldsCommandCollection))]
+    public async Task ShouldBeInvalidFields(CreateClientCommand command, string errorMessage)
     {
         //Arrange
-        const string errorMessageEmptyName = "Name is required.";
-        var command = new CreateClientCommand(string.Empty, "test@test.com", 988887787, "Av test number 3");
+        var clientRepository = new Mock<IClientRepository>();
+
+        var validator = new CreateClientCommandValidator(clientRepository.Object);
+        //Act
+        var validationResult = await validator.ValidateAsync(command);
+
+        //Assert
+        validationResult.IsValid.Should().BeFalse();
+        validationResult.Errors.Should().NotBeEmpty().And
+                               .Contain(x => x.ErrorMessage == errorMessage);
+    }
+    [Fact]
+    public async Task ShouldAlreadyExistClientEmail()
+    {
+        //Arrange
+        const string errorMessageEmptyName = "Email already exists.";
+        var command = new CreateClientCommand("NameTest", "test@test.com", 988887787, "Av test number 3");
 
         var clientRepository = new Mock<IClientRepository>(MockBehavior.Strict);
 
         clientRepository.Setup(x => x.ExistAsync(It.IsAny<Expression<Func<ClientEntity, bool>>>(),
                                                  It.IsAny<CancellationToken>()))
-                        .ReturnsAsync(false)
+                        .ReturnsAsync(true)
                         .Verifiable();
 
         var validator = new CreateClientCommandValidator(clientRepository.Object);

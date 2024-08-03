@@ -14,11 +14,11 @@ public sealed class CreateClientCommandValidator : AbstractValidator<CreateClien
         RuleFor(v => v.Email)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress()
-            .MustAsync(BeUniqueEmailAsync).WithMessage("The specified client email already exists.");
+            .MustAsync(BeUniqueEmailAsync).WithMessage("Email already exists.");
 
         RuleFor(v => v.PhoneNumber)
             .NotEmpty().WithMessage("PhoneNumber is required.")
-            .Must(x => x.ToString().Length == 9).WithMessage("Invalid phone number needs to be 9 numbers");
+            .Must(x => x.ToString().Length == 9).WithMessage("PhoneNumber needs to be 9 numbers.");
     }
 
     public async Task<bool> BeUniqueEmailAsync(string email, CancellationToken cancellationToken) =>
