@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Application.Client.Commands.CreateClient;
 using Domain.Entities;
 using Domain.Interfaces.Repository;
-using FluentAssertions;
 
 namespace Application.UnitTests.Client;
 [Collection("Client")]
