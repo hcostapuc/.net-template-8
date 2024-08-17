@@ -15,8 +15,8 @@ public class CreateClientCommandHandlerTest
     {
 
     }
-    [Fact(DisplayName = "GIVEN a createTodoItemCommand valid WHEN createcommandhandler call occur THEN return the client id")]
-    public async Task ShouldCreateSuccesfullyClient()
+    [Fact]
+    public async Task ShouldCreateSuccesfullyClientAsync()
     {
         //Arrange
         var command = new CreateClientCommand("NameTest", "test@test.com", 878773475, "Av test number 4");

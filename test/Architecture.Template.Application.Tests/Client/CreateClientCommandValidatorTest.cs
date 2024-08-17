@@ -13,7 +13,7 @@ namespace Application.UnitTests.Client;
 public class CreateClientCommandValidatorTest
 {
     [Fact]
-    public async Task ShouldBeValidCommand()
+    public async Task ShouldBeValidCommandAsync()
     {
         //Arrange
         var command = new CreateClientCommand("NameTest", "test@test.com", 988887787, "Av test number 3");
@@ -47,7 +47,7 @@ public class CreateClientCommandValidatorTest
         ];
     [Theory]
     [MemberData(nameof(InvalidFieldsCommandCollection))]
-    public async Task ShouldBeInvalidFields(CreateClientCommand command, string errorMessage)
+    public async Task ShouldBeInvalidFieldsAsync(CreateClientCommand command, string errorMessage)
     {
         //Arrange
         var clientRepository = new Mock<IClientRepository>();
@@ -61,11 +61,12 @@ public class CreateClientCommandValidatorTest
         validationResult.Errors.Should().NotBeEmpty().And
                                .Contain(x => x.ErrorMessage == errorMessage);
     }
+
     [Fact]
-    public async Task ShouldAlreadyExistClientEmail()
+    public async Task ShouldAlreadyExistClientEmailAsync()
     {
         //Arrange
-        const string errorMessageEmptyName = "Email already exists.";
+        var errorMessageEmptyName = "Email already exists.";
         var command = new CreateClientCommand("NameTest", "test@test.com", 988887787, "Av test number 3");
 
         var clientRepository = new Mock<IClientRepository>(MockBehavior.Strict);
